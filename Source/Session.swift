@@ -1256,3 +1256,11 @@ extension Session: SessionStateProvider {
         requestTaskMap.requests.forEach { $0.finish(error: AFError.sessionInvalidated(error: error)) }
     }
 }
+
+extension Session{
+  /// 为json序列化失败的数据提供再次尝试解析的函数
+  public func setParserForSerializationFailedData(_ parser : @escaping (Data)->Any? ){
+    Session.parserForSerializationFailedData = parser
+  }
+  static var parserForSerializationFailedData:((Data)->Any?)?
+}

@@ -688,7 +688,13 @@ public final class JSONResponseSerializer: ResponseSerializer {
         do {
             return try JSONSerialization.jsonObject(with: data, options: options)
         } catch {
-            throw AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: error))
+          // 有一些字段可能解析失败 例如：  {"summary": #中英文有奖话题中英文有奖话题中英文有奖话题话题话题##0316英文话题#【RP-5340】【PC】【英文】\343\200【RP-5340】"}
+          if let parser = Session.parserForSerializationFailedData {
+            if let obj = parser(data){
+              return obj
+            }
+          }
+          throw AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: error))
         }
     }
 }
